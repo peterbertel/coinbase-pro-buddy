@@ -3,6 +3,9 @@ provider "aws" {
 	version = "~> 3.1"
 }
 
-resource "aws_eip" "elastic_ip_address" {
-  vpc      = true
+resource "aws_eip" "nat" {
+  vpc  = true
+	tags = {
+    Name = "NAT Elastic IP"
+  }
 }
