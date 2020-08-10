@@ -43,7 +43,7 @@ resource "aws_lambda_function" "coinbase_lambda" {
   filename         = "lambda.zip"
   function_name    = "CoinbaseLambda"
   role             = aws_iam_role.lambda_iam_role.arn
-  handler          = "get-accounts.lambda_handler"
+  handler          = "lambda/get-accounts.lambda_handler"
   source_code_hash = filebase64sha256("lambda.zip")
   runtime          = "python3.8"
 }
