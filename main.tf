@@ -12,7 +12,7 @@ resource "aws_eip" "nat" {
 
 resource "aws_nat_gateway" "gateway" {
   allocation_id = aws_eip.nat.id
-  subnet_id     = var.subnet_id
+  subnet_id     = var.subnet_a_id
   tags          = {
     Name = "Coinbase NAT Gateway"
   }

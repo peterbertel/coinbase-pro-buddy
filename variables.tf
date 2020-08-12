@@ -3,7 +3,22 @@ variable "region" {
 	description = "The default region for the Coinbase Pro API resources"
 }
 
-variable "subnet_id" {
+variable "subnet_a_id" {
 	type = string
-	description = "The subnet to place the NAT Gateway"
+	description = "The subnet to place the NAT Gateway and the Coinbase Lambda function"
+}
+
+variable "subnet_b_id" {
+	type = string
+	description = "An additional subnet for the Coinbase Lambda function"
+}
+
+variable "vpc_id" {
+	type = string
+	description = "The VPC to host the Coinbase Lambda function"
+}
+
+variable "lambda_sg" {
+	type = string
+	description = "The security group to assign to the Coinbase Lambda function"
 }
