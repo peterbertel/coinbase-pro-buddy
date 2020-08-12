@@ -23,7 +23,9 @@ data "aws_iam_policy_document" "coinbase_lambda_policy_doc" {
     sid     = "1"
     effect  = "Allow"
     actions = [
-      "ec2:CreateNetworkInterface"
+      "ec2:CreateNetworkInterface",
+      "ec2:DeleteNetworkInterface",
+      "ec2:DescribeNetworkInterfaces"
     ]
     resources = [
       "*"
@@ -68,4 +70,9 @@ resource "aws_lambda_function" "coinbase_lambda" {
   handler          = "get-accounts.lambda_handler"
   source_code_hash = filebase64sha256("python-scripts/lambda.zip")
   runtime          = "python3.8"
+
+  vpc_config {
+    subnet_ids         = [var.subnet_a_id, var.subnet_b_id]
+    security_group_ids = [var.lambda_sg]
+  }
 }

@@ -13,11 +13,6 @@ variable "subnet_b_id" {
 	description = "An additional subnet for the Coinbase Lambda function"
 }
 
-variable "vpc_id" {
-	type = string
-	description = "The VPC to host the Coinbase Lambda function"
-}
-
 variable "lambda_sg" {
 	type = string
 	description = "The security group to assign to the Coinbase Lambda function"
