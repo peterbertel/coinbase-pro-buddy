@@ -3,6 +3,11 @@ variable "region" {
 	description = "The default region for the Coinbase Pro API resources"
 }
 
+variable "vpc_cidr_block" {
+	type = string
+	description = "The CIDR block to assign to the new VPC"
+}
+
 variable "subnet_a_id" {
 	type = string
 	description = "The subnet to place the NAT Gateway and the Coinbase Lambda function"

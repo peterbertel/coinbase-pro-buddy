@@ -3,6 +3,14 @@ provider "aws" {
 	version = "~> 3.1"
 }
 
+resource "aws_vpc" "coinbase_vpc" {
+  cidr_block = var.vpc_cidr_block
+
+  tags = {
+    Name = "Coinbase VPC"
+  }
+}
+
 resource "aws_eip" "nat" {
   vpc  = true
 	tags = {
@@ -13,7 +21,8 @@ resource "aws_eip" "nat" {
 resource "aws_nat_gateway" "gateway" {
   allocation_id = aws_eip.nat.id
   subnet_id     = var.subnet_a_id
-  tags          = {
+
+  tags = {
     Name = "Coinbase NAT Gateway"
   }
 }
