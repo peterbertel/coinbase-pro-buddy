@@ -22,8 +22,3 @@ variable "subnet_c_cidr_block" {
 	type = string
 	description = "The CIDR block to assign to Subnet C within the Coinbase VPC"
 }
-
-variable "lambda_sg" {
-	type = string
-	description = "The security group to assign to the Coinbase Lambda function"
-}

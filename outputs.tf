@@ -6,6 +6,10 @@ output "vpc" {
   value = aws_vpc.coinbase_vpc.id
 }
 
+output "igw" {
+  value = aws_internet_gateway.coinbase_igw.id
+}
+
 output "subnet_a" {
   value = aws_subnet.coinbase_subnet_a.id
 }
@@ -20,6 +24,10 @@ output "subnet_c" {
 
 output "nat_gateway" {
   value = aws_nat_gateway.gateway.id
+}
+
+output "security_group" {
+  value = aws_security_group.lambda_sg.id
 }
 
 output "lambda_function" {
