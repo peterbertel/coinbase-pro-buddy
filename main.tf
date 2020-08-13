@@ -12,9 +12,10 @@ resource "aws_vpc" "coinbase_vpc" {
 }
 
 resource "aws_subnet" "coinbase_subnet_a" {
-  vpc_id            = aws_vpc.coinbase_vpc.id
-  cidr_block        = var.subnet_a_cidr_block
-  availability_zone = "${var.region}a"
+  vpc_id                  = aws_vpc.coinbase_vpc.id
+  cidr_block              = var.subnet_a_cidr_block
+  availability_zone       = "${var.region}a"
+  map_public_ip_on_launch = true
 
   tags = {
     Name = "Coinbase Subnet A"
@@ -32,10 +33,9 @@ resource "aws_subnet" "coinbase_subnet_b" {
 }
 
 resource "aws_subnet" "coinbase_subnet_c" {
-  vpc_id                  = aws_vpc.coinbase_vpc.id
-  cidr_block              = var.subnet_c_cidr_block
-  availability_zone       = "${var.region}c"
-  map_public_ip_on_launch = true
+  vpc_id            = aws_vpc.coinbase_vpc.id
+  cidr_block        = var.subnet_c_cidr_block
+  availability_zone = "${var.region}c"
 
   tags = {
     Name = "Coinbase Subnet C"
@@ -51,7 +51,7 @@ resource "aws_eip" "nat" {
 
 resource "aws_nat_gateway" "gateway" {
   allocation_id = aws_eip.nat.id
-  subnet_id     = var.subnet_a_id
+  subnet_id     = aws_subnet.coinbase_subnet_a
 
   tags = {
     Name = "Coinbase NAT Gateway"
@@ -112,7 +112,7 @@ resource "aws_lambda_function" "coinbase_lambda" {
   runtime          = "python3.8"
 
   vpc_config {
-    subnet_ids         = [var.subnet_a_id, var.subnet_b_id]
+    subnet_ids         = [aws_subnet.coinbase_subnet_b, aws_subnet.coinbase_subnet_c]
     security_group_ids = [var.lambda_sg]
   }
 }

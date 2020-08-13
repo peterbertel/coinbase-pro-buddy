@@ -10,7 +10,7 @@ variable "vpc_cidr_block" {
 
 variable "subnet_a_cidr_block" {
 	type = string
-	description = "The CIDR block to assign to Subnet A within the Coinbase VPC"
+	description = "The CIDR block to assign to Subnet A within the Coinbase VPC, which is a public subnet"
 }
 
 variable "subnet_b_cidr_block" {
@@ -20,7 +20,7 @@ variable "subnet_b_cidr_block" {
 
 variable "subnet_c_cidr_block" {
 	type = string
-	description = "The CIDR block to assign to Subnet C within the Coinbase VPC, which is a public subnet"
+	description = "The CIDR block to assign to Subnet C within the Coinbase VPC"
 }
 
 variable "subnet_a_id" {
