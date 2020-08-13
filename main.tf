@@ -51,7 +51,7 @@ resource "aws_eip" "nat" {
 
 resource "aws_nat_gateway" "gateway" {
   allocation_id = aws_eip.nat.id
-  subnet_id     = aws_subnet.coinbase_subnet_a
+  subnet_id     = aws_subnet.coinbase_subnet_a.id
 
   tags = {
     Name = "Coinbase NAT Gateway"
@@ -112,7 +112,7 @@ resource "aws_lambda_function" "coinbase_lambda" {
   runtime          = "python3.8"
 
   vpc_config {
-    subnet_ids         = [aws_subnet.coinbase_subnet_b, aws_subnet.coinbase_subnet_c]
+    subnet_ids         = [aws_subnet.coinbase_subnet_b.id, aws_subnet.coinbase_subnet_c.id]
     security_group_ids = [var.lambda_sg]
   }
 }
