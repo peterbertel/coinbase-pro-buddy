@@ -8,6 +8,21 @@ variable "vpc_cidr_block" {
 	description = "The CIDR block to assign to the new VPC"
 }
 
+variable "subnet_a_cidr_block" {
+	type = string
+	description = "The CIDR block to assign to Subnet A within the Coinbase VPC"
+}
+
+variable "subnet_b_cidr_block" {
+	type = string
+	description = "The CIDR block to assign to Subnet B within the Coinbase VPC"
+}
+
+variable "subnet_c_cidr_block" {
+	type = string
+	description = "The CIDR block to assign to Subnet C within the Coinbase VPC, which is a public subnet"
+}
+
 variable "subnet_a_id" {
 	type = string
 	description = "The subnet to place the NAT Gateway and the Coinbase Lambda function"

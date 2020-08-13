@@ -11,6 +11,37 @@ resource "aws_vpc" "coinbase_vpc" {
   }
 }
 
+resource "aws_subnet" "coinbase_subnet_a" {
+  vpc_id            = aws_vpc.coinbase_vpc.id
+  cidr_block        = var.subnet_a_cidr_block
+  availability_zone = "${var.region}a"
+
+  tags = {
+    Name = "Coinbase Subnet A"
+  }
+}
+
+resource "aws_subnet" "coinbase_subnet_b" {
+  vpc_id            = aws_vpc.coinbase_vpc.id
+  cidr_block        = var.subnet_b_cidr_block
+  availability_zone = "${var.region}b"
+
+  tags = {
+    Name = "Coinbase Subnet B"
+  }
+}
+
+resource "aws_subnet" "coinbase_subnet_c" {
+  vpc_id                  = aws_vpc.coinbase_vpc.id
+  cidr_block              = var.subnet_c_cidr_block
+  availability_zone       = "${var.region}c"
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name = "Coinbase Subnet C"
+  }
+}
+
 resource "aws_eip" "nat" {
   vpc  = true
 	tags = {
