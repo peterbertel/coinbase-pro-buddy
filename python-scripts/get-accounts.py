@@ -15,9 +15,7 @@ class CoinbaseExchangeAuth(AuthBase):
 		timestamp = str(time.time())
 		message = timestamp + request.method + request.path_url + (request.body or '')
 		hmac_key = base64.b64decode(self.secret_key)
-		# signature = hmac.new(hmac_key, message, hashlib.sha256)
 		signature = hmac.new(hmac_key, message.encode('ascii'), hashlib.sha256)
-		# signature_b64 = signature.digest().encode('base64').rstrip('\n')
 		signature_b64 = base64.b64encode(signature.digest()).decode('utf-8')
 
 		request.headers.update({
@@ -29,12 +27,18 @@ class CoinbaseExchangeAuth(AuthBase):
 		})
 		return request
 
-api_url = 'https://api.pro.coinbase.com/'
-auth = CoinbaseExchangeAuth(API_KEY, API_SECRET, API_PASS)
+def lambda_handler(event, context):
+	print("Hello world")
+	api_url = 'https://api.pro.coinbase.com/'
+	auth = CoinbaseExchangeAuth(API_KEY, API_SECRET, API_PASS)
 
-# Get accounts
-account_response = requests.get(api_url + 'accounts', auth=auth)
-print(account_response.json())
+	# # Get accounts
+	account_response = requests.get(api_url + 'accounts', auth=auth)
+	print(account_response.json())
 
-# time_response = requests.get(api_url + 'time')
-# print(time_response.json())
+	time_response = requests.get(api_url + 'time')
+	print(time_response.json())
+	return {
+		'statusCode': 200,
+		'body': json.dumps('Hello from Lambda!')
+	}

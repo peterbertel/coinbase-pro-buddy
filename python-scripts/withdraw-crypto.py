@@ -30,15 +30,20 @@ class CoinbaseExchangeAuth(AuthBase):
 		})
 		return request
 
-api_url = 'https://api.pro.coinbase.com/'
-auth = CoinbaseExchangeAuth(API_KEY, API_SECRET, API_PASS)
+def lambda_handler(event, context):
+	api_url = 'https://api.pro.coinbase.com/'
+	auth = CoinbaseExchangeAuth(API_KEY, API_SECRET, API_PASS)
 
-withdraw_data = {
-	'amount': WITHDRAW_AMOUNT,
-	'currency': WITHDRAW_CURRENCY,
-	'crypto_address': CRYPTO_ADDRESS
-}
-withdraw_data = json.dumps(withdraw_data)
+	withdraw_data = {
+		'amount': WITHDRAW_AMOUNT,
+		'currency': WITHDRAW_CURRENCY,
+		'crypto_address': CRYPTO_ADDRESS
+	}
+	withdraw_data = json.dumps(withdraw_data)
 
-withdraw_response = requests.post(api_url + 'withdrawals/crypto', auth=auth, data=withdraw_data)
-print(withdraw_response.json())
+	withdraw_response = requests.post(api_url + 'withdrawals/crypto', auth=auth, data=withdraw_data)
+	print(withdraw_response.json())
+	return {
+		'statusCode': 200,
+		'body': json.dumps('Hello from Lambda!')
+	}

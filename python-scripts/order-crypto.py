@@ -33,19 +33,23 @@ class CoinbaseExchangeAuth(AuthBase):
 api_url = 'https://api.pro.coinbase.com/'
 auth = CoinbaseExchangeAuth(API_KEY, API_SECRET, API_PASS)
 
-product_response = requests.get(api_url + 'products/{}/ticker'.format(PRODUCT_ID))
-ask_price = product_response.json()['ask']
+def lambda_handler(event, context):
+	api_url = 'https://api.pro.coinbase.com/'
+	auth = CoinbaseExchangeAuth(API_KEY, API_SECRET, API_PASS)
 
-maximum_fee = ORDER_SIZE_IN_USD * .005
-order_size = round((ORDER_SIZE_IN_USD - maximum_fee) / float(ask_price), 7)
+	product_response = requests.get(api_url + 'products/{}/ticker'.format(PRODUCT_ID))
+	ask_price = product_response.json()['ask']
 
-order_data = {
-	'size': order_size,
-	'price': ask_price,
-	'side': ORDER_SIDE,
-	'product_id': PRODUCT_ID
-}
-order_data = json.dumps(order_data)
+	maximum_fee = ORDER_SIZE_IN_USD * .005
+	order_size = round((ORDER_SIZE_IN_USD - maximum_fee) / float(ask_price), 7)
 
-order_response = requests.post(api_url + 'orders', auth=auth, data=order_data)
-print(order_response.json())
+	order_data = {
+		'size': order_size,
+		'price': ask_price,
+		'side': ORDER_SIDE,
+		'product_id': PRODUCT_ID
+	}
+	order_data = json.dumps(order_data)
+
+	order_response = requests.post(api_url + 'orders', auth=auth, data=order_data)
+	print(order_response.json())
