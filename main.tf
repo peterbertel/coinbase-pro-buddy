@@ -140,7 +140,8 @@ data "aws_iam_policy_document" "coinbase_lambda_policy_doc" {
     actions = [
       "ec2:CreateNetworkInterface",
       "ec2:DeleteNetworkInterface",
-      "ec2:DescribeNetworkInterfaces"
+      "ec2:DescribeNetworkInterfaces",
+      "ssm:GetParameter"
     ]
     resources = [
       "*"
