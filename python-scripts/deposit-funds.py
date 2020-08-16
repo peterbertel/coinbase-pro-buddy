@@ -45,6 +45,7 @@ def lambda_handler(event, context):
 
 	deposit_response = requests.post(api_url + 'deposits/payment-method', auth=auth, data=deposit_data)
 	print(deposit_response.json())
+
 	return {
 		'statusCode': 200,
 		'body': json.dumps('Hello from Lambda!')

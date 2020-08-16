@@ -43,6 +43,7 @@ def lambda_handler(event, context):
 
 	withdraw_response = requests.post(api_url + 'withdrawals/crypto', auth=auth, data=withdraw_data)
 	print(withdraw_response.json())
+
 	return {
 		'statusCode': 200,
 		'body': json.dumps('Hello from Lambda!')

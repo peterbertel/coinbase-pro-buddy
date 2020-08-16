@@ -38,6 +38,7 @@ def lambda_handler(event, context):
 
 	time_response = requests.get(api_url + 'time')
 	print(time_response.json())
+
 	return {
 		'statusCode': 200,
 		'body': json.dumps('Hello from Lambda!')
