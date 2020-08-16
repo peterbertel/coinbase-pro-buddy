@@ -53,3 +53,8 @@ def lambda_handler(event, context):
 
 	order_response = requests.post(api_url + 'orders', auth=auth, data=order_data)
 	print(order_response.json())
+
+	return {
+		'statusCode': 200,
+		'body': json.dumps('Hello from Lambda!')
+	}
