@@ -1,9 +1,7 @@
-import json, hmac, hashlib, time, requests, base64
+import json, hmac, hashlib, time, requests, base64, boto3
 from requests.auth import AuthBase
 
-API_KEY = "abc"
-API_SECRET = "abc"
-API_PASS = "abc"
+API_PERMISSION = "view"
 
 class CoinbaseExchangeAuth(AuthBase):
 	def __init__(self, api_key, secret_key, passphrase):
@@ -27,10 +25,25 @@ class CoinbaseExchangeAuth(AuthBase):
 		})
 		return request
 
+def get_api_keys():
+	client = boto3.client('ssm')
+	api_keys = {}
+	api_keys_ssm_parameter_names = ["api_key", "api_secret", "api_pass"]
+
+	for ssm_parameter_name in api_keys_ssm_parameter_names:
+		response = client.get_parameter(
+			Name='/coinbase/{}/{}'.format(ssm_parameter_name, API_PERMISSION),
+			WithDecryption=True
+		)
+		api_keys.update({ssm_parameter_name: response['Parameter']['Value']})
+
+	return api_keys
+
 def lambda_handler(event, context):
 	print("Hello world")
 	api_url = 'https://api.pro.coinbase.com/'
-	auth = CoinbaseExchangeAuth(API_KEY, API_SECRET, API_PASS)
+	keys = get_api_keys()
+	auth = CoinbaseExchangeAuth(keys['api_key'], keys['api_secret'], keys['api_pass'])
 
 	# # Get accounts
 	account_response = requests.get(api_url + 'accounts', auth=auth)
