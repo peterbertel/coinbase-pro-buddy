@@ -183,7 +183,7 @@ resource "aws_lambda_function" "coinbase_lambda" {
   filename         = "python-scripts/lambda.zip"
   function_name    = "CoinbaseLambda"
   role             = aws_iam_role.coinbase_lambda_role.arn
-  handler          = "deposit-funds.lambda_handler"
+  handler          = "get-accounts.lambda_handler"
   source_code_hash = filebase64sha256("python-scripts/lambda.zip")
   runtime          = "python3.8"
   timeout          = 5
@@ -192,4 +192,16 @@ resource "aws_lambda_function" "coinbase_lambda" {
     subnet_ids         = [aws_subnet.coinbase_subnet_b.id, aws_subnet.coinbase_subnet_c.id]
     security_group_ids = [aws_security_group.lambda_sg.id]
   }
+}
+
+resource "aws_kms_key" "ssm_kms_key" {
+  description             = "Coinbase KMS Key for encrypting SSM Parameters"
+  tags = {
+    Name = "Coinbase SSM KMS Key"
+  }
+}
+
+resource "aws_kms_alias" "ssm_kms_key_alias" {
+  name          = "alias/coinbase_ssm_kms_key"
+  target_key_id = aws_kms_key.ssm_kms_key.key_id
 }
