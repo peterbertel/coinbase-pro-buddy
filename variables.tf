@@ -1,3 +1,8 @@
+variable "account_id" {
+	type        = string
+	description = "The AWS account in which to deploy the Coinbase Pro API resources"
+}
+
 variable "region" {
 	type = string
 	description = "The default region for the Coinbase Pro API resources"

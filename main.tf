@@ -179,6 +179,44 @@ resource "aws_iam_role_policy_attachment" "coinbase-lambda-iam-role-policy-attac
   policy_arn = aws_iam_policy.coinbase_lambda_policy.arn
 }
 
+resource "aws_kms_key" "ssm_kms_key" {
+  description             = "Coinbase KMS Key for encrypting SSM Parameters"
+  tags = {
+    Name = "Coinbase SSM KMS Key"
+  }
+}
+
+resource "aws_kms_alias" "ssm_kms_key_alias" {
+  name          = "alias/coinbase_ssm_kms_key"
+  target_key_id = aws_kms_key.ssm_kms_key.key_id
+}
+
+data "aws_iam_policy_document" "coinbase_lambda_kms_policy_doc" {
+  statement {
+    sid     = "1"
+    effect  = "Allow"
+    actions = [
+      "kms:DescribeKey",
+      "kms:GenerateDataKey",
+      "kms:Decrypt"
+    ]
+    resources = [
+      "arn:aws:kms:${var.region}:${var.account_id}:key/${aws_kms_key.ssm_kms_key.key_id}"
+    ]
+  }
+}
+
+resource "aws_iam_policy" "coinbase_lambda_kms_policy" {
+  name        = "coinbase-lambda-ssm-kms-key-policy"
+  description = "The IAM policy for the Coinbase Lambda function to use the SSM KMS Key"
+  policy      = data.aws_iam_policy_document.coinbase_lambda_kms_policy_doc.json
+}
+
+resource "aws_iam_role_policy_attachment" "lambda-ssm-kms-policy-attachment" {
+  role       = aws_iam_role.coinbase_lambda_role.name
+  policy_arn = aws_iam_policy.coinbase_lambda_kms_policy.arn
+}
+
 resource "aws_lambda_function" "coinbase_lambda" {
   filename         = "python-scripts/lambda.zip"
   function_name    = "CoinbaseLambda"
@@ -192,16 +230,4 @@ resource "aws_lambda_function" "coinbase_lambda" {
     subnet_ids         = [aws_subnet.coinbase_subnet_b.id, aws_subnet.coinbase_subnet_c.id]
     security_group_ids = [aws_security_group.lambda_sg.id]
   }
-}
-
-resource "aws_kms_key" "ssm_kms_key" {
-  description             = "Coinbase KMS Key for encrypting SSM Parameters"
-  tags = {
-    Name = "Coinbase SSM KMS Key"
-  }
-}
-
-resource "aws_kms_alias" "ssm_kms_key_alias" {
-  name          = "alias/coinbase_ssm_kms_key"
-  target_key_id = aws_kms_key.ssm_kms_key.key_id
 }
