@@ -1,9 +1,7 @@
 import json, hmac, hashlib, time, requests, base64
 from requests.auth import AuthBase
 
-API_KEY = "abc"
-API_SECRET = "abc"
-API_PASS = "abc"
+API_PERMISSION = "transfer"
 TRANSFER_AMOUNT = 10
 TRANSFER_CURRENCY = "USD"
 
@@ -28,6 +26,20 @@ class CoinbaseExchangeAuth(AuthBase):
 			'Content-Type': 'application/json'
 		})
 		return request
+
+def get_api_keys():
+	client = boto3.client('ssm')
+	api_keys = {}
+	api_keys_ssm_parameter_names = ["api_key", "api_secret", "api_pass"]
+
+	for ssm_parameter_name in api_keys_ssm_parameter_names:
+		response = client.get_parameter(
+			Name='/coinbase/{}/{}'.format(ssm_parameter_name, API_PERMISSION),
+			WithDecryption=True
+		)
+		api_keys.update({ssm_parameter_name: response['Parameter']['Value']})
+
+	return api_keys
 
 def lambda_handler(event, context):
 	api_url = 'https://api.pro.coinbase.com/'
