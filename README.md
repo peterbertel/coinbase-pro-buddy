@@ -8,13 +8,18 @@ The Terraform project creates a new VPC with three subnets, one public and two p
 
 ## Prerequisites
 
-* Python version 3.8.2< installed locally
-* Coinbase Pro `view`, `transfer`, and `trade` API keys
+* Python version 3.8.2< installed on the local machine
+* Access to a Coinbase Pro Account and the ability to create `view`, `transfer`, and `trade` API keys
+* AWS Console Access for creating SSM Parameters
 * Terraform configured with the proper [AWS Provider authentication](https://registry.terraform.io/providers/hashicorp/aws/latest/docs#authentication)
 
 ## Usage
 
-### Creating lambda.zip
+* [Create lambda.zip](#create-lambda.zip)
+* [Apply the Terraform Changes](#apply-the-terraform-changes)
+* [Create Coinbase Pro API Keys and SSM Parameters](#create-coinbase-pro-api-keys-and-ssm-parameters)
+
+### Create lambda.zip
 
 1. Create a new directory called `lambda` and copy the desired python script into that directory (`get-accounts.py`, `deposit-funds.py`, `order-crypto.py`, or `withdraw-crypto.py`).
 
@@ -30,7 +35,35 @@ pip3 install requests -t ./
 zip -r ../lambda.zip .
 ```
 
-After applying the Terraform changes, the API keys need to be updated in the Lambda function. Instead of explicitly defining the keys in the function code or through environment variables, an ideal solution is creating secure SSM parameter strings to store these values.
+### Apply the Terraform Changes
+
+The Terraform project only requires `lambda.zip` to be created in the target AWS account. Apply the changes and complete the remaining steps.
+
+### Create Coinbase Pro API Keys and SSM Parameters
+
+For each type of API Key (`View`, `Transfer`, and `Trade`), complete the following steps:
+
+* Navigate to the `API` page in Coinbase Pro and click `+ New API Key` to begin creating a new API key.
+* For the `Portfolio` entry, use the `Default Portfolio`
+* Set a new nickname for the API key (i.e.: `aws_view`, `aws_trade`, etc.)
+* Select the correct API Permission checkbox (`View`, `Transfer`, or `Trade`)
+* Update the `Passphrase` value if desired
+* Reference the Terraform `apply` output or navigate to the AWS account to find the value of the Elastic IP Address created by the project and enter this IP Address into the `IP Whitelist` section of the `Add an API Key` dialog box
+* Copy the `Passphrase`
+* Navigate to Systems Manager - Parameter Store in the AWS account and create a new SSM Parameter with the following information:
+	* Set the `Name` to be `/coinbase/api_pass/API_PERMISSION`, where `API_PERMISSION` is either `view`, `transfer`, or `trade`
+	* Select `SecureString` as the `Type`
+	* For the `KMS Key Source`, leave the checkbox as `My current account`
+	* In the `KMS Key ID` dropdown menu, find the new KMS Key created from the Terraform project (`alias/coinbase_ssm_kms_key`)
+	* Set the `Value` to be the `Passphrase` copied from Coinbase Pro
+* After creating the SSM Parameter, navigate back to Coinbase Pro and click `CREATE_API_KEY`
+* Copy the API secret key displayed
+* Create another secure SSM Parameter with similar values as the previous SSM Parameter, setting the name to be `/coinbase/api_secret/API_PERMISSION` and the `Value` to be the API secret key copied from Coinbase Pro
+* After creating the SSM Parameter, finish creating the Coinbase Pro API Key
+* Find the API key within the list of API Keys and copy the string listed below the `Portfolio` and above the `Nickname` fields - this value is the `api_key`
+* Create another secure SSM Parameter with similar values as the previous SSM Parameters, setting the name to be `/coinbase/api_key/API_PERMISSION` and the `Value` to be the API key copied from Coinbase Pro
+
+After creating these SSM Parameters, the Lambda function will be able to execute and retrieve these values during runtime.
 
 ## License
 
