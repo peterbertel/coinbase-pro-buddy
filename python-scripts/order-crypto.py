@@ -1,8 +1,8 @@
-import json, hmac, hashlib, time, requests, base64
+import json, hmac, hashlib, time, requests, base64, os
 from requests.auth import AuthBase
 
 API_PERMISSION = "trade"
-ORDER_SIZE_IN_USD = 20
+ORDER_SIZE_IN_USD = os.environ['ORDER_SIZE_IN_USD']
 ORDER_SIDE = "buy"
 PRODUCT_ID = "BTC-USD"
 
