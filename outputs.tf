@@ -30,6 +30,10 @@ output "security_group" {
   value = aws_security_group.lambda_sg.id
 }
 
-output "lambda_function" {
-  value = aws_lambda_function.coinbase_lambda.arn
+output "lambda_deposit" {
+  value = aws_lambda_function.coinbase_lambda_deposit.arn
+}
+
+output "lambda_order" {
+  value = aws_lambda_function.coinbase_lambda_order.arn
 }

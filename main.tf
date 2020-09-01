@@ -217,11 +217,26 @@ resource "aws_iam_role_policy_attachment" "lambda-ssm-kms-policy-attachment" {
   policy_arn = aws_iam_policy.coinbase_lambda_kms_policy.arn
 }
 
-resource "aws_lambda_function" "coinbase_lambda" {
+resource "aws_lambda_function" "coinbase_lambda_deposit" {
   filename         = "python-scripts/lambda.zip"
-  function_name    = "CoinbaseLambda"
+  function_name    = "CoinbaseLambdaDeposit"
   role             = aws_iam_role.coinbase_lambda_role.arn
-  handler          = "get-accounts.lambda_handler"
+  handler          = "deposit-funds.lambda_handler"
+  source_code_hash = filebase64sha256("python-scripts/lambda.zip")
+  runtime          = "python3.8"
+  timeout          = 5
+
+  vpc_config {
+    subnet_ids         = [aws_subnet.coinbase_subnet_b.id, aws_subnet.coinbase_subnet_c.id]
+    security_group_ids = [aws_security_group.lambda_sg.id]
+  }
+}
+
+resource "aws_lambda_function" "coinbase_lambda_order" {
+  filename         = "python-scripts/lambda.zip"
+  function_name    = "CoinbaseLambdaOrder"
+  role             = aws_iam_role.coinbase_lambda_role.arn
+  handler          = "order-crypto.lambda_handler"
   source_code_hash = filebase64sha256("python-scripts/lambda.zip")
   runtime          = "python3.8"
   timeout          = 5
