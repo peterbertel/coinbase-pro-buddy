@@ -21,7 +21,7 @@ The Terraform project creates a new VPC with three subnets, one public and two p
 
 ### Create lambda.zip
 
-1. Create a new directory called `lambda` and copy the desired python script into that directory (`get-accounts.py`, `deposit-funds.py`, `order-crypto.py`, or `withdraw-crypto.py`).
+1. Within the `python-scripts` directory, create a new directory called `lambda` and copy the `deposit-funds.py` and `order-crypto.py` python scripts into that directory.
 
 2. In a terminal, navigate to the `lambda` directory and run the following command to install the `requests` library:
 
