@@ -246,3 +246,43 @@ resource "aws_lambda_function" "coinbase_lambda_order" {
     security_group_ids = [aws_security_group.lambda_sg.id]
   }
 }
+
+resource "aws_cloudwatch_event_rule" "lambda_deposit_event_rule" {
+  name                = "coinbase-lambda-deposit"
+  description         = "Trigger CoinbaseLambdaDeposit on the 1st day of every month"
+  schedule_expression = "cron(0 0 1 * * *)"
+}
+
+resource "aws_cloudwatch_event_rule" "lambda_order_event_rule" {
+  name                = "coinbase-lambda-order"
+  description         = "Trigger CoinbaseLambdaOrder on the 15th day of every month"
+  schedule_expression = "cron(0 0 15 * * *)"
+}
+
+resource "aws_cloudwatch_event_target" "lambda_deposit_event_target" {
+  rule      = aws_cloudwatch_event_rule.lambda_deposit_event_rule.name
+  target_id = "SendToDepositLambda"
+  arn       = aws_lambda_function.coinbase_lambda_deposit.arn
+}
+
+resource "aws_cloudwatch_event_target" "lambda_order_event_target" {
+  rule      = aws_cloudwatch_event_rule.lambda_order_event_rule.name
+  target_id = "SendToOrderLambda"
+  arn       = aws_lambda_function.coinbase_lambda_deposit.arn
+}
+
+resource "aws_lambda_permission" "allow_cloudwatch_deposit_lambda" {
+  statement_id  = "AllowExecutionFromCloudWatch"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.coinbase_lambda_deposit.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.lambda_deposit_event_rule.arn
+}
+
+resource "aws_lambda_permission" "allow_cloudwatch_order_lambda" {
+  statement_id  = "AllowExecutionFromCloudWatch"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.coinbase_lambda_order.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.lambda_order_event_rule.arn
+}
