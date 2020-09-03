@@ -43,7 +43,8 @@ def get_api_keys():
 
 def lambda_handler(event, context):
 	api_url = 'https://api.pro.coinbase.com/'
-	auth = CoinbaseExchangeAuth(API_KEY, API_SECRET, API_PASS)
+	keys = get_api_keys()
+	auth = CoinbaseExchangeAuth(keys['api_key'], keys['api_secret'], keys['api_pass'])
 
 	payment_methods_response = requests.get(api_url + 'payment-methods', auth=auth)
 	payment_method_id = payment_methods_response.json()[0]['id']
