@@ -1,4 +1,4 @@
-import json, hmac, hashlib, time, requests, base64, os
+import json, hmac, hashlib, time, requests, base64, os, boto3
 from requests.auth import AuthBase
 
 API_PERMISSION = "transfer"
