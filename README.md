@@ -18,8 +18,8 @@ The two lambda functions [deposit funds](python-scripts/deposit-funds.py) and [o
 
 ## Usage
 
-* [Create lambda.zip](#create-lambda.zip)
-* [Create terraform.tfvars](#create-terraform.tfvars)
+* [Create lambda.zip](#create-lambdazip)
+* [Create terraform.tfvars](#create-terraformtfvars)
 * [Apply the Terraform Changes](#apply-the-terraform-changes)
 * [Create Coinbase Pro API Keys and SSM Parameters](#create-coinbase-pro-api-keys-and-ssm-parameters)
 
