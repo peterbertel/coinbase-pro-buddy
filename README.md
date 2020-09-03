@@ -4,11 +4,13 @@ This repository contains Python scripts for interacting with the [Coinbase Pro A
 
 ## AWS Architecture Overview
 
-The Terraform project creates a new VPC with three subnets, one public and two private. The public subnet routes all outbound traffic through an Internet Gateway and contains a NAT Gateway. This NAT Gateway is assigned an elastic IP address, which must be whitelisted when [creating Coinbase API Keys](https://docs.pro.coinbase.com/#authentication). All outbound traffic from the private subnets are routed to the NAT Gateway. The lambda function is deployed within the new VPC and uses the two private subnets.
+The Terraform project creates a new VPC with three subnets, one public and two private. The public subnet routes all outbound traffic through an Internet Gateway and contains a NAT Gateway. This NAT Gateway is assigned an elastic IP address, which must be whitelisted when [creating Coinbase API Keys](https://docs.pro.coinbase.com/#authentication). All outbound traffic from the private subnets are routed to the NAT Gateway. The lambda functions are deployed within the new VPC and uses the two private subnets.
+
+The two lambda functions [deposit funds](python-scripts/deposit-funds.py) and [order crypto](python-scripts/order-crypto.py). Using CloudWatch Event Rules, the first lambda function deposits funds on the 1st of every month and the second lambda function orders crypto (BTC, by default) on the 15th of every month.
 
 ## Prerequisites
 
-* Python version 3.8.2< installed on the local machine
+* Python version 3.8.2< installed on the local machine (this is for running the `pip` install for `boto3` in the `Create lambda.zip` section)
 * Access to a Coinbase Pro Account and the ability to create `view`, `transfer`, and `trade` API keys
 * AWS Console Access for creating SSM Parameters
 * Terraform configured with the proper [AWS Provider authentication](https://registry.terraform.io/providers/hashicorp/aws/latest/docs#authentication)
