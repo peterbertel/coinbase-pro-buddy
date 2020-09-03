@@ -43,6 +43,7 @@ def get_api_keys():
 	return api_keys
 
 def lambda_handler(event, context):
+	order_size_float = float(ORDER_SIZE_IN_USD)
 	api_url = 'https://api.pro.coinbase.com/'
 	keys = get_api_keys()
 	auth = CoinbaseExchangeAuth(keys['api_key'], keys['api_secret'], keys['api_pass'])
@@ -50,8 +51,8 @@ def lambda_handler(event, context):
 	product_response = requests.get(api_url + 'products/{}/ticker'.format(PRODUCT_ID))
 	ask_price = product_response.json()['ask']
 
-	maximum_fee = ORDER_SIZE_IN_USD * .005
-	order_size = round((ORDER_SIZE_IN_USD - maximum_fee) / float(ask_price), 7)
+	maximum_fee = order_size_float * .005
+	order_size = round((order_size_float - maximum_fee) / float(ask_price), 7)
 
 	order_data = {
 		'size': order_size,
