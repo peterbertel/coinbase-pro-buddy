@@ -1,8 +1,8 @@
-import json, hmac, hashlib, time, requests, base64
+import json, hmac, hashlib, time, requests, base64, os, boto3
 from requests.auth import AuthBase
 
 API_PERMISSION = "transfer"
-TRANSFER_AMOUNT = 10
+TRANSFER_AMOUNT = os.environ['ORDER_SIZE_IN_USD']
 TRANSFER_CURRENCY = "USD"
 
 class CoinbaseExchangeAuth(AuthBase):
@@ -43,7 +43,8 @@ def get_api_keys():
 
 def lambda_handler(event, context):
 	api_url = 'https://api.pro.coinbase.com/'
-	auth = CoinbaseExchangeAuth(API_KEY, API_SECRET, API_PASS)
+	keys = get_api_keys()
+	auth = CoinbaseExchangeAuth(keys['api_key'], keys['api_secret'], keys['api_pass'])
 
 	payment_methods_response = requests.get(api_url + 'payment-methods', auth=auth)
 	payment_method_id = payment_methods_response.json()[0]['id']
@@ -60,5 +61,5 @@ def lambda_handler(event, context):
 
 	return {
 		'statusCode': 200,
-		'body': json.dumps('Hello from Lambda!')
+		'body': json.dumps('Successfully deposited funds.')
 	}

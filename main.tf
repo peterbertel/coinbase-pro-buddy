@@ -230,6 +230,12 @@ resource "aws_lambda_function" "coinbase_lambda_deposit" {
     subnet_ids         = [aws_subnet.coinbase_subnet_b.id, aws_subnet.coinbase_subnet_c.id]
     security_group_ids = [aws_security_group.lambda_sg.id]
   }
+
+  environment {
+    variables = {
+      ORDER_SIZE_IN_USD = var.order_size_in_usd
+    }
+  }
 }
 
 resource "aws_lambda_function" "coinbase_lambda_order" {
@@ -244,6 +250,12 @@ resource "aws_lambda_function" "coinbase_lambda_order" {
   vpc_config {
     subnet_ids         = [aws_subnet.coinbase_subnet_b.id, aws_subnet.coinbase_subnet_c.id]
     security_group_ids = [aws_security_group.lambda_sg.id]
+  }
+
+  environment {
+    variables = {
+      ORDER_SIZE_IN_USD = var.order_size_in_usd
+    }
   }
 }
 
