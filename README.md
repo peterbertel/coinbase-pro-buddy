@@ -13,11 +13,13 @@ The two lambda functions [deposit funds](python-scripts/deposit-funds.py) and [o
 * Python version 3.8.2< installed on the local machine (this is for running the `pip` install for `boto3` in the `Create lambda.zip` section)
 * Access to a Coinbase Pro Account and the ability to create `view`, `transfer`, and `trade` API keys
 * AWS Console Access for creating SSM Parameters
+* VPC and Subnet CIDR blocks for a new VPC and subnets in the target AWS account
 * Terraform configured with the proper [AWS Provider authentication](https://registry.terraform.io/providers/hashicorp/aws/latest/docs#authentication)
 
 ## Usage
 
 * [Create lambda.zip](#create-lambda.zip)
+* [Create terraform.tfvars](#create-terraform.tfvars)
 * [Apply the Terraform Changes](#apply-the-terraform-changes)
 * [Create Coinbase Pro API Keys and SSM Parameters](#create-coinbase-pro-api-keys-and-ssm-parameters)
 
@@ -36,6 +38,10 @@ pip3 install requests -t ./
 ```
 zip -r ../lambda.zip .
 ```
+
+### Create terraform.tfvars
+
+Rename [`example-terraform.tfvars`](example-terraform.tfvars) to `terraform.tfvars` and update each of the variables accordingly. Review [`variables.tf`](variables.tf) for descriptions of these variables.
 
 ### Apply the Terraform Changes
 

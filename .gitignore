@@ -1,4 +1,6 @@
-*terraform*
+terraform.tfstate*
+terraform.tfvars
+.terraform
 lambda*
 .DS_Store
 planfile
