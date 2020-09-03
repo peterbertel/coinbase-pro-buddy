@@ -1,8 +1,8 @@
-import json, hmac, hashlib, time, requests, base64
+import json, hmac, hashlib, time, requests, base64, os
 from requests.auth import AuthBase
 
 API_PERMISSION = "transfer"
-TRANSFER_AMOUNT = 10
+TRANSFER_AMOUNT = os.environ['ORDER_SIZE_IN_USD']
 TRANSFER_CURRENCY = "USD"
 
 class CoinbaseExchangeAuth(AuthBase):
