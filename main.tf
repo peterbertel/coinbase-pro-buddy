@@ -280,7 +280,7 @@ resource "aws_cloudwatch_event_target" "lambda_deposit_event_target" {
 resource "aws_cloudwatch_event_target" "lambda_order_event_target" {
   rule      = aws_cloudwatch_event_rule.lambda_order_event_rule.name
   target_id = "SendToOrderLambda"
-  arn       = aws_lambda_function.coinbase_lambda_deposit.arn
+  arn       = aws_lambda_function.coinbase_lambda_order.arn
 }
 
 resource "aws_lambda_permission" "allow_cloudwatch_deposit_lambda" {
