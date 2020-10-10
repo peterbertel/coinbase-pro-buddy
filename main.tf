@@ -236,7 +236,7 @@ resource "aws_lambda_function" "coinbase_lambda_deposit" {
   handler          = "deposit-funds.lambda_handler"
   source_code_hash = filebase64sha256("python-scripts/lambda.zip")
   runtime          = "python3.8"
-  timeout          = 5
+  timeout          = 10
 
   vpc_config {
     subnet_ids         = [aws_subnet.coinbase_subnet_b.id, aws_subnet.coinbase_subnet_c.id]
@@ -257,7 +257,7 @@ resource "aws_lambda_function" "coinbase_lambda_order" {
   handler          = "order-crypto.lambda_handler"
   source_code_hash = filebase64sha256("python-scripts/lambda.zip")
   runtime          = "python3.8"
-  timeout          = 5
+  timeout          = 10
 
   vpc_config {
     subnet_ids         = [aws_subnet.coinbase_subnet_b.id, aws_subnet.coinbase_subnet_c.id]
