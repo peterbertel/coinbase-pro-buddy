@@ -147,6 +147,18 @@ data "aws_iam_policy_document" "coinbase_lambda_policy_doc" {
       "*"
     ]
   }
+  statement {
+    sid     = "2"
+    effect  = "Allow"
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents"
+    ]
+    resources = [
+      "arn:aws:logs:*:*:*"
+    ]
+  }
 }
 
 resource "aws_iam_policy" "coinbase_lambda_policy" {
