@@ -273,14 +273,14 @@ resource "aws_lambda_function" "coinbase_lambda_order" {
 
 resource "aws_cloudwatch_event_rule" "lambda_deposit_event_rule" {
   name                = "coinbase-lambda-deposit"
-  description         = "Trigger CoinbaseLambdaDeposit on the 1st day of every month"
-  schedule_expression = "cron(0 0 1 * ? *)"
+  description         = "Trigger CoinbaseLambdaDeposit on every Monday at 12am UTC"
+  schedule_expression = "cron(0 0 ? * 2 *)"
 }
 
 resource "aws_cloudwatch_event_rule" "lambda_order_event_rule" {
   name                = "coinbase-lambda-order"
-  description         = "Trigger CoinbaseLambdaOrder on the 15th day of every month"
-  schedule_expression = "cron(0 0 15 * ? *)"
+  description         = "Trigger CoinbaseLambdaOrder on every Monday at 12pm UTC"
+  schedule_expression = "cron(0 12 ? * 2 *)"
 }
 
 resource "aws_cloudwatch_event_target" "lambda_deposit_event_target" {
