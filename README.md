@@ -53,7 +53,7 @@ For each type of API Key (`View`, `Transfer`, and `Trade`), complete the followi
 
 * Navigate to the `API` page in Coinbase Pro and click `+ New API Key` to begin creating a new API key.
 * For the `Portfolio` entry, use the `Default Portfolio`
-* Set a new nickname for the API key (i.e.: `aws_view`, `aws_trade`, etc.)
+* Set a new nickname for the API key (i.e.: `aws-view`, `aws-trade`, etc.)
 * Select the correct API Permission checkbox (`View`, `Transfer`, or `Trade`)
 * Update the `Passphrase` value if desired
 * Reference the Terraform `apply` output or navigate to the AWS account to find the value of the Elastic IP Address created by the project and enter this IP Address into the `IP Whitelist` section of the `Add an API Key` dialog box
