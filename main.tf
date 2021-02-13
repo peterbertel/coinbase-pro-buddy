@@ -1,8 +1,3 @@
-provider "aws" {
-	region  = var.region
-	version = "~> 3.1"
-}
-
 resource "aws_vpc" "coinbase_vpc" {
   cidr_block = var.vpc_cidr_block
 
