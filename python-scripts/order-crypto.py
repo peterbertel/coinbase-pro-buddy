@@ -2,9 +2,7 @@ import json, hmac, hashlib, time, requests, base64, os, boto3
 from requests.auth import AuthBase
 
 API_PERMISSION = "trade"
-ORDER_SIZE_IN_USD = os.environ['ORDER_SIZE_IN_USD']
 ORDER_SIDE = "buy"
-PRODUCT_ID = "BTC-USD"
 
 class CoinbaseExchangeAuth(AuthBase):
 	def __init__(self, api_key, secret_key, passphrase):
@@ -43,12 +41,13 @@ def get_api_keys():
 	return api_keys
 
 def lambda_handler(event, context):
-	order_size_float = float(ORDER_SIZE_IN_USD)
+	order_size_float = float(event["order_size"])
+	product_id = event["product_id"]
 	api_url = 'https://api.pro.coinbase.com/'
 	keys = get_api_keys()
 	auth = CoinbaseExchangeAuth(keys['api_key'], keys['api_secret'], keys['api_pass'])
 
-	product_response = requests.get(api_url + 'products/{}/ticker'.format(PRODUCT_ID))
+	product_response = requests.get(api_url + 'products/{}/ticker'.format(product_id))
 	ask_price = product_response.json()['ask']
 
 	maximum_fee = order_size_float * .005
@@ -58,7 +57,7 @@ def lambda_handler(event, context):
 		'size': order_size,
 		'price': ask_price,
 		'side': ORDER_SIDE,
-		'product_id': PRODUCT_ID
+		'product_id': product_id
 	}
 	order_data = json.dumps(order_data)
 

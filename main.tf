@@ -258,12 +258,6 @@ resource "aws_lambda_function" "coinbase_lambda_order" {
     subnet_ids         = [aws_subnet.coinbase_subnet_b.id, aws_subnet.coinbase_subnet_c.id]
     security_group_ids = [aws_security_group.lambda_sg.id]
   }
-
-  environment {
-    variables = {
-      ORDER_SIZE_IN_USD = var.order_size_in_usd
-    }
-  }
 }
 
 resource "aws_cloudwatch_event_rule" "lambda_deposit_event_rule" {
@@ -284,10 +278,18 @@ resource "aws_cloudwatch_event_target" "lambda_deposit_event_target" {
   arn       = aws_lambda_function.coinbase_lambda_deposit.arn
 }
 
-resource "aws_cloudwatch_event_target" "lambda_order_event_target" {
+resource "aws_cloudwatch_event_target" "lambda_order_event_target_bitcoin" {
   rule      = aws_cloudwatch_event_rule.lambda_order_event_rule.name
-  target_id = "SendToOrderLambda"
+  target_id = "SendToOrderLambdaBTC"
   arn       = aws_lambda_function.coinbase_lambda_order.arn
+  input     = "{\"product_id\":\"${var.product_id}\", \"order_size\":${var.order_size_in_usd}}"
+}
+
+resource "aws_cloudwatch_event_target" "lambda_order_event_target_ethereum" {
+  rule      = aws_cloudwatch_event_rule.lambda_order_event_rule.name
+  target_id = "SendToOrderLambdaETH"
+  arn       = aws_lambda_function.coinbase_lambda_order.arn
+  input     = "{\"product_id\":\"ETH-USD\", \"order_size\":${var.order_size_in_usd}}"
 }
 
 resource "aws_lambda_permission" "allow_cloudwatch_deposit_lambda" {
