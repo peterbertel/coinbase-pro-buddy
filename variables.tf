@@ -33,9 +33,19 @@ variable "deposit_amount" {
 	description = "The amount in USD to automatically deposit"
 }
 
-variable "product_order_pairs" {
+variable deposit_cron_expression {
+	type    = string
+	default = "cron(0 0 ? * 2 *)"
+}
+
+variable weekly_cron_expression {
+	type    = string
+	default = "cron(0 12 ? * 2 *)"
+}
+
+variable "weekly_product_orders" {
   type        = map(string)
-	description = "An object containing the Coinbase product_ids and their order sizes to execute"
+	description = "An object containing the Coinbase product_ids and their order sizes to execute every week"
 	default     = {
 	  BTC-USD   = 100
 	}
