@@ -33,12 +33,6 @@ variable "deposit_amount" {
 	description = "The amount in USD to automatically deposit"
 }
 
-variable "product_id" {
-	type        = string
-	description = "The Id of the Coinbase crypto product to order"
-	default     = "BTC-USD"
-}
-
 variable "product_order_pairs" {
   type        = map(string)
 	description = "An object containing the Coinbase product_ids and their order sizes to execute"
