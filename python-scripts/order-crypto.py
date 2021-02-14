@@ -51,7 +51,8 @@ def lambda_handler(event, context):
 	ask_price = product_response.json()['ask']
 
 	maximum_fee = order_size_float * .005
-	order_size = round((order_size_float - maximum_fee) / float(ask_price), 7)
+	num_decimals_in_order_size = len(str(round(float(ask_price))))
+	order_size = round((order_size_float - maximum_fee) / float(ask_price), num_decimals_in_order_size)
 
 	order_data = {
 		'size': order_size,
