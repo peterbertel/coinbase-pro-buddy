@@ -237,12 +237,6 @@ resource "aws_lambda_function" "coinbase_lambda_deposit" {
     subnet_ids         = [aws_subnet.coinbase_subnet_b.id, aws_subnet.coinbase_subnet_c.id]
     security_group_ids = [aws_security_group.lambda_sg.id]
   }
-
-  environment {
-    variables = {
-      ORDER_SIZE_IN_USD = var.order_size_in_usd
-    }
-  }
 }
 
 resource "aws_lambda_function" "coinbase_lambda_order" {
@@ -276,6 +270,7 @@ resource "aws_cloudwatch_event_target" "lambda_deposit_event_target" {
   rule      = aws_cloudwatch_event_rule.lambda_deposit_event_rule.name
   target_id = "SendToDepositLambda"
   arn       = aws_lambda_function.coinbase_lambda_deposit.arn
+  input     = "{\"deposit_amount\":\"${var.deposit_amount}\"}"
 }
 
 resource "aws_cloudwatch_event_target" "lambda_order_event_target" {

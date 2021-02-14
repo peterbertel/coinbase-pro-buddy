@@ -28,9 +28,9 @@ variable "subnet_c_cidr_block" {
 	description = "The CIDR block to assign to Subnet C within the Coinbase VPC"
 }
 
-variable "order_size_in_usd" {
+variable "deposit_amount" {
 	type = string
-	description = "The amount in USD of the selected currency to trade"
+	description = "The amount in USD to automatically deposit"
 }
 
 variable "product_id" {

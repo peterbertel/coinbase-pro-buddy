@@ -2,7 +2,6 @@ import json, hmac, hashlib, time, requests, base64, os, boto3
 from requests.auth import AuthBase
 
 API_PERMISSION = "transfer"
-TRANSFER_AMOUNT = os.environ['ORDER_SIZE_IN_USD']
 TRANSFER_CURRENCY = "USD"
 
 class CoinbaseExchangeAuth(AuthBase):
@@ -45,12 +44,13 @@ def lambda_handler(event, context):
 	api_url = 'https://api.pro.coinbase.com/'
 	keys = get_api_keys()
 	auth = CoinbaseExchangeAuth(keys['api_key'], keys['api_secret'], keys['api_pass'])
+	deposit_amount = event["deposit_amount"]
 
 	payment_methods_response = requests.get(api_url + 'payment-methods', auth=auth)
 	payment_method_id = payment_methods_response.json()[0]['id']
 
 	deposit_data = {
-		'amount': TRANSFER_AMOUNT,
+		'amount': deposit_amount,
 		'currency': TRANSFER_CURRENCY,
 		'payment_method_id': payment_method_id
 	}
