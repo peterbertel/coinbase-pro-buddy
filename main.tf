@@ -260,10 +260,16 @@ resource "aws_cloudwatch_event_rule" "lambda_deposit_event_rule" {
   schedule_expression = var.deposit_cron_expression
 }
 
-resource "aws_cloudwatch_event_rule" "lambda_order_event_rule" {
-  name                = "coinbase-lambda-order"
+resource "aws_cloudwatch_event_rule" "lambda_order_weekly_event_rule" {
+  name                = "coinbase-lambda-weekly-order"
   description         = "Trigger CoinbaseLambdaOrder on every Monday at 12pm UTC"
   schedule_expression = var.weekly_cron_expression
+}
+
+resource "aws_cloudwatch_event_rule" "lambda_order_monthly_event_rule" {
+  name                = "coinbase-lambda-monthly-order"
+  description         = "Trigger CoinbaseLambdaOrder the first day of every month at 12am UTC"
+  schedule_expression = var.monthly_cron_expression
 }
 
 resource "aws_cloudwatch_event_target" "lambda_deposit_event_target" {
@@ -273,10 +279,18 @@ resource "aws_cloudwatch_event_target" "lambda_deposit_event_target" {
   input     = "{\"deposit_amount\":\"${var.deposit_amount}\"}"
 }
 
-resource "aws_cloudwatch_event_target" "lambda_order_event_target" {
+resource "aws_cloudwatch_event_target" "lambda_order_weekly_event_target" {
   for_each = var.weekly_product_orders
-  rule      = aws_cloudwatch_event_rule.lambda_order_event_rule.name
-  target_id = "SendToOrderLambda${each.key}"
+  rule      = aws_cloudwatch_event_rule.lambda_order_weekly_event_rule.name
+  target_id = "SendToOrderLambdaWeekly${each.key}"
+  arn       = aws_lambda_function.coinbase_lambda_order.arn
+  input     = "{\"product_id\":\"${each.key}\", \"order_size\":${each.value}}"
+}
+
+resource "aws_cloudwatch_event_target" "lambda_order_monthly_event_target" {
+  for_each = var.monthly_product_orders
+  rule      = aws_cloudwatch_event_rule.lambda_order_monthly_event_rule.name
+  target_id = "SendToOrderLambdaMonthly${each.key}"
   arn       = aws_lambda_function.coinbase_lambda_order.arn
   input     = "{\"product_id\":\"${each.key}\", \"order_size\":${each.value}}"
 }
@@ -289,10 +303,18 @@ resource "aws_lambda_permission" "allow_cloudwatch_deposit_lambda" {
   source_arn    = aws_cloudwatch_event_rule.lambda_deposit_event_rule.arn
 }
 
-resource "aws_lambda_permission" "allow_cloudwatch_order_lambda" {
-  statement_id  = "AllowExecutionFromCloudWatch"
+resource "aws_lambda_permission" "allow_cloudwatch_weekly_order_lambda" {
+  statement_id  = "AllowExecutionFromWeeklyCloudWatchEventRule"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.coinbase_lambda_order.function_name
   principal     = "events.amazonaws.com"
-  source_arn    = aws_cloudwatch_event_rule.lambda_order_event_rule.arn
+  source_arn    = aws_cloudwatch_event_rule.lambda_order_weekly_event_rule.arn
+}
+
+resource "aws_lambda_permission" "allow_cloudwatch_monthly_order_lambda" {
+  statement_id  = "AllowExecutionFromMonthlyCloudWatchEventRule"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.coinbase_lambda_order.function_name
+  principal     = "events.amazonaws.com"
+  source_arn    = aws_cloudwatch_event_rule.lambda_order_monthly_event_rule.arn
 }

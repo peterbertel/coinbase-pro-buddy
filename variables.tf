@@ -43,10 +43,23 @@ variable weekly_cron_expression {
 	default = "cron(0 12 ? * 2 *)"
 }
 
+variable monthly_cron_expression {
+	type    = string
+	default = "cron(0 0 1 * ? *)"
+}
+
 variable "weekly_product_orders" {
   type        = map(string)
 	description = "An object containing the Coinbase product_ids and their order sizes to execute every week"
 	default     = {
 	  BTC-USD   = 100
+	}
+}
+
+variable "monthly_product_orders" {
+  type        = map(string)
+	description = "An object containing the Coinbase product_ids and their order sizes to execute every month"
+	default     = {
+	  ETH-USD   = 100
 	}
 }
