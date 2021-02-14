@@ -6,7 +6,7 @@ subnet_b_cidr_block = "10.10.16.0/20"
 subnet_c_cidr_block = "10.10.32.0/20"
 order_size_in_usd   = "20"
 product_id          = "BTC-USD"
-product_order_pairs = [
-  {product_name = "bitcoin", product_id = "BTC-USD", order_size = 100},
-	{product_name = "ethereum", product_id = "ETH-USD", order_size = 100},
-]
+product_order_pairs = {
+	BTC-USD = 100
+	ETH-USD = 100
+}
