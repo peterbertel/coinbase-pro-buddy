@@ -32,3 +32,17 @@ variable "order_size_in_usd" {
 	type = string
 	description = "The amount in USD of the selected currency to trade"
 }
+
+variable "product_id" {
+	type        = string
+	description = "The Id of the Coinbase crypto product to order"
+	default     = "BTC-USD"
+}
+
+variable "product_order_pairs" {
+  type        = map(string)
+	description = "An object containing the Coinbase product_ids and their order sizes to execute"
+	default     = {
+	  BTC-USD   = 100
+	}
+}
