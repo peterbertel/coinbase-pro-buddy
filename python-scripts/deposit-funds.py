@@ -1,5 +1,6 @@
 import json, hmac, hashlib, time, requests, base64, os, boto3
 from requests.auth import AuthBase
+from requests.exceptions import HTTPError
 
 API_PERMISSION = "transfer"
 TRANSFER_CURRENCY = "USD"
@@ -41,25 +42,37 @@ def get_api_keys():
 	return api_keys
 
 def lambda_handler(event, context):
-	api_url = 'https://api.pro.coinbase.com/'
-	keys = get_api_keys()
-	auth = CoinbaseExchangeAuth(keys['api_key'], keys['api_secret'], keys['api_pass'])
-	deposit_amount = event["deposit_amount"]
+	try:
+		api_url = 'https://api.pro.coinbase.com/'
+		keys = get_api_keys()
+		auth = CoinbaseExchangeAuth(keys['api_key'], keys['api_secret'], keys['api_pass'])
+		deposit_amount = event["deposit_amount"]
 
-	payment_methods_response = requests.get(api_url + 'payment-methods', auth=auth)
-	payment_method_id = payment_methods_response.json()[0]['id']
+		payment_methods_response = requests.get(api_url + 'payment-methods', auth=auth)
+		payment_method_id = payment_methods_response.json()[0]['id']
 
-	deposit_data = {
-		'amount': deposit_amount,
-		'currency': TRANSFER_CURRENCY,
-		'payment_method_id': payment_method_id
-	}
-	deposit_data = json.dumps(deposit_data)
+		deposit_data = {
+			'amount': deposit_amount,
+			'currency': TRANSFER_CURRENCY,
+			'payment_method_id': payment_method_id
+		}
+		deposit_data = json.dumps(deposit_data)
 
-	deposit_response = requests.post(api_url + 'deposits/payment-method', auth=auth, data=deposit_data)
-	print(deposit_response.json())
-
-	return {
-		'statusCode': 200,
-		'body': json.dumps('Successfully deposited funds.')
-	}
+		deposit_response = requests.post(api_url + 'deposits/payment-method', auth=auth, data=deposit_data)
+		print(deposit_response.json())
+		deposit_response.raise_for_status()
+	except HTTPError as http_error:
+		return {
+			'statusCode': deposit_response.status_code,
+			'body': http_error.response.json()
+		}
+	except Exception as error:
+		return {
+			'statusCode': 400,
+			'body': json.dumps(str(error))
+		}
+	else:
+		return {
+			'statusCode': deposit_response.status_code,
+			'body': json.dumps('Successfully deposited funds.')
+		}
