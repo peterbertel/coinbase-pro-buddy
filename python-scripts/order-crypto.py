@@ -1,5 +1,6 @@
 import json, hmac, hashlib, time, requests, base64, os, boto3
 from requests.auth import AuthBase
+from requests.exceptions import HTTPError
 
 API_PERMISSION = "trade"
 ORDER_SIDE = "buy"
@@ -41,31 +42,43 @@ def get_api_keys():
 	return api_keys
 
 def lambda_handler(event, context):
-	order_size_float = float(event["order_size"])
-	product_id = event["product_id"]
-	api_url = 'https://api.pro.coinbase.com/'
-	keys = get_api_keys()
-	auth = CoinbaseExchangeAuth(keys['api_key'], keys['api_secret'], keys['api_pass'])
+	try:
+		order_size_float = float(event["order_size"])
+		product_id = event["product_id"]
+		api_url = 'https://api.pro.coinbase.com/'
+		keys = get_api_keys()
+		auth = CoinbaseExchangeAuth(keys['api_key'], keys['api_secret'], keys['api_pass'])
 
-	product_response = requests.get(api_url + 'products/{}/ticker'.format(product_id))
-	ask_price = product_response.json()['ask']
+		product_response = requests.get(api_url + 'products/{}/ticker'.format(product_id))
+		ask_price = product_response.json()['ask']
 
-	maximum_fee = order_size_float * .005
-	num_decimals_in_order_size = len(str(round(float(ask_price))))
-	order_size = round((order_size_float - maximum_fee) / float(ask_price), num_decimals_in_order_size)
+		maximum_fee = order_size_float * .005
+		num_decimals_in_order_size = len(str(round(float(ask_price))))
+		order_size = round((order_size_float - maximum_fee) / float(ask_price), num_decimals_in_order_size)
 
-	order_data = {
-		'size': order_size,
-		'price': ask_price,
-		'side': ORDER_SIDE,
-		'product_id': product_id
-	}
-	order_data = json.dumps(order_data)
+		order_data = {
+			'size': order_size,
+			'price': ask_price,
+			'side': ORDER_SIDE,
+			'product_id': product_id
+		}
+		order_data = json.dumps(order_data)
 
-	order_response = requests.post(api_url + 'orders', auth=auth, data=order_data)
-	print(order_response.json())
-
-	return {
-		'statusCode': 200,
-		'body': json.dumps('Successfully executed an order.')
-	}
+		order_response = requests.post(api_url + 'orders', auth=auth, data=order_data)
+		print(order_response.json())
+		order_response.raise_for_status()
+	except HTTPError as http_error:
+		return {
+			'statusCode': order_response.status_code,
+			'body': http_error.response.json()
+		}
+	except Exception as error:
+		return {
+			'statusCode': 400,
+			'body': json.dumps(str(error))
+		}
+	else:
+		return {
+			'statusCode': order_response.status_code,
+			'body': json.dumps('Successfully executed an order.')
+		}
