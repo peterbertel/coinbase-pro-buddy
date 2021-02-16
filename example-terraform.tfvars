@@ -11,6 +11,7 @@ monthly_cron_expression  = "cron(0 0 1 * ? *)"
 weekly_product_orders    = {
 	BTC-USD  = 100
 }
-monthly_product_orders  = {
+monthly_product_orders   = {
 	ETH-USD  = 100
 }
+sms_number_for_errors    = "+12345678910"

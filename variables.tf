@@ -63,3 +63,8 @@ variable "monthly_product_orders" {
 	  ETH-USD   = 100
 	}
 }
+
+variable "sms_number_for_errors" {
+	type        = string
+	description = "The SMS number in which to send alerts whenever the Order Lambda function has a Non-HTTP Error"
+}
