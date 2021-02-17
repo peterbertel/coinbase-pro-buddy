@@ -324,6 +324,7 @@ resource "aws_sns_topic" "order_lambda_errors" {
 }
 
 resource "aws_sns_topic_subscription" "lambda_order_errors_sms_target" {
+  count = var.sms_number_for_errors != "" ? 1 : 0
   topic_arn = aws_sns_topic.order_lambda_errors.arn
   protocol  = "sms"
   endpoint  = var.sms_number_for_errors
