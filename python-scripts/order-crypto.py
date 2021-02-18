@@ -73,10 +73,8 @@ def lambda_handler(event, context):
 			'body': http_error.response.json()
 		}
 	except Exception as error:
-		return {
-			'statusCode': 400,
-			'body': json.dumps(str(error))
-		}
+		print("An ERROR occurred: {}".format(str(error)))
+		raise
 	else:
 		return {
 			'statusCode': order_response.status_code,
