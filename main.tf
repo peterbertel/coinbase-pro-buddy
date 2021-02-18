@@ -319,8 +319,19 @@ resource "aws_lambda_permission" "allow_cloudwatch_monthly_order_lambda" {
   source_arn    = aws_cloudwatch_event_rule.lambda_order_monthly_event_rule.arn
 }
 
+resource "aws_sns_topic" "deposit_lambda_errors" {
+  name = "DepositLambdaErrors"
+}
+
 resource "aws_sns_topic" "order_lambda_errors" {
   name = "OrderLambdaErrors"
+}
+
+resource "aws_sns_topic_subscription" "lambda_deposit_errors_sms_target" {
+  count = var.sms_number_for_errors != "" ? 1 : 0
+  topic_arn = aws_sns_topic.deposit_lambda_errors.arn
+  protocol  = "sms"
+  endpoint  = var.sms_number_for_errors
 }
 
 resource "aws_sns_topic_subscription" "lambda_order_errors_sms_target" {
@@ -328,6 +339,22 @@ resource "aws_sns_topic_subscription" "lambda_order_errors_sms_target" {
   topic_arn = aws_sns_topic.order_lambda_errors.arn
   protocol  = "sms"
   endpoint  = var.sms_number_for_errors
+}
+
+resource "aws_cloudwatch_metric_alarm" "deposit_lambda_alarm" {
+  alarm_name                = "DepositLambdaAlarm"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = "1"
+  metric_name               = "Errors"
+  namespace                 = "AWS/Lambda"
+  period                    = "60"
+  statistic                 = "Sum"
+  threshold                 = "1"
+  alarm_description         = "This metric monitors any Errors thrown from the Coinbase deposit lambda function"
+  dimensions = {
+    "FunctionName" = "CoinbaseLambdaDeposit"
+  }
+  alarm_actions = [ aws_sns_topic.deposit_lambda_errors.arn ]
 }
 
 resource "aws_cloudwatch_metric_alarm" "order_lambda_alarm" {
