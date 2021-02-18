@@ -8,6 +8,12 @@ The Terraform project creates a new VPC with three subnets, one public and two p
 
 The two lambda functions [deposit funds](python-scripts/deposit-funds.py) and [order crypto](python-scripts/order-crypto.py). CloudWatch Event Rules trigger these lambda functions, which can be executed on a customized schedule by specifying different cron expressions as input variables (see [`variables.tf`](variables.tf) for more information). By default, deposits occur weekly and crypto orders can occur either weekly or monthly.
 
+### CloudWatch Monitoring and Alerting
+
+The Terraform project also creates CloudWatch Alarms and SNS topics to enable automated alerting for any Lambda invocation errors. If the `sms_number_for_errors` variable is defined, an SNS topic subscription will be created to send the alert information to the SMS number defined in the variable.
+
+Starting April 1, 2021, origination SMS numbers will need to be provided to send any alerts over SMS. See the [AWS documentation](https://docs.aws.amazon.com/sns/latest/dg/channels-sms-us-requirements.html) for more information. To continue receiving alerts for the failed lambda invocations without using SMS, follow the [these instructions](https://docs.aws.amazon.com/sns/latest/dg/sns-email-notifications.html) for instructions on how to add an email address as an SNS subscriber through the AWS console.
+
 ## Prerequisites
 
 * Python version 3.8.2< installed on the local machine (this is for running the `pip` install for `boto3` in the `Create lambda.zip` section)
